@@ -2,8 +2,10 @@ version: '3.8'
 
 services:
   traefik:
-    image: traefik:v3.1
+    image: traefik:v3.7
     container_name: traefik
+    environment:
+      - DOCKER_API_VERSION=1.55
     command:
       - "--api.insecure=false"
       - "--api.dashboard=true"
