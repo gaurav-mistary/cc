@@ -251,7 +251,7 @@ def template_create(
         ..., help="The user-friendly alias (e.g., 'webserver') or exact branch name."
     ),
     repo_url: str = typer.Option(
-        "git@github.com-personal:gaurav-mistary/templates.git",
+        "https://github.com/gaurav-mistary/cc-templates.git",
         "--repo",
         envvar="TEMPLATES_REPO_URL",
         help="The Git repository hosting the templates. Defaults to the user's templates fork.",
@@ -272,6 +272,10 @@ def template_create(
         "--registry",
         envvar="CC_REGISTRY",
         help="Path or URL (http/https) to a JSON file mapping friendly names to branch names.",
+    ),
+    extra_args: list[str] = typer.Argument(
+        None,
+        help="Any extra arguments to pass to cookiecutter (e.g. project_slug=plane-mgmt)",
     ),
 ):
     """
@@ -331,16 +335,19 @@ def template_create(
             set(os.listdir(output_dir)) if os.path.exists(output_dir) else set()
         )
 
-        # Run cookiecutter directly wrapping their command
+        cmd = [
+            "cookiecutter",
+            repo_url,
+            "--checkout",
+            actual_branch,
+            "--output-dir",
+            output_dir,
+        ]
+        if extra_args:
+            cmd.extend(extra_args)
+
         subprocess.run(
-            [
-                "cookiecutter",
-                repo_url,
-                "--checkout",
-                actual_branch,
-                "--output-dir",
-                output_dir,
-            ],
+            cmd,
             check=True,
         )
 
