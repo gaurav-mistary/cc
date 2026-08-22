@@ -154,6 +154,11 @@ docker run --rm -it \
 
 After the **first** GHCR publish: GitHub → Packages → `cc` → set visibility to **Public** if servers should pull without a token.
 
+Image: `ghcr.io/gaurav-mistary/cc:latest` (multi-arch: `linux/amd64` + `linux/arm64`).
+
+Package page: https://github.com/gaurav-mistary/cc/pkgs/container/cc
+
+
 ### Private `cc-templates`
 
 ```bash
