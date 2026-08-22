@@ -6,8 +6,9 @@ This repository (`cc`) is the engine for a highly opinionated, hierarchical Cook
 ### Core Concepts:
 1. **The CLI Engine**: The `main` branch contains `cc-cli`, a custom Python tool built with Typer to orchestrate Cookiecutter and Git.
 2. **The Base Templates**: Branches directly off `main` (e.g., `traefik`, `dockhand`, `py3.12`) contain base Cookiecutter template directories.
-3. **The Registry & Templates Repo**: To scale this, the actual combined templates are hosted in a separate repository (e.g. a fork called `cc-templates`). The `cc-cli` supports resolving friendly aliases to internal branches via a `registry.json` mapping (local or fetched from a URL).
+3. **The Registry & Templates Repo**: **`cc-templates`** is a separate repository holding Docker Cookiecutter templates for every self-hosted service (dockhand, immich, audiobookshelf, vaultwarden, backups, etc.) plus composed hybrid branches. Friendly aliases map to branch names via `registry.json`.
 4. **The Cascade**: Updates made to `main` cascade down to base branches. Updates made to base branches cascade down to hybrid template branches.
+5. **Docker runtime**: The `cc` image can be pulled on a server; run the container with a volume mount to generate projects from any `cc-templates` branch via `TEMPLATES_REPO_URL`.
 
 ## The CLI Tool (`cc-cli`)
 The CLI orchestrates everything.
@@ -23,3 +24,9 @@ The CLI orchestrates everything.
 2. Sync the `cc-templates` fork.
 3. Run `just cc cascade` in the fork to auto-merge Traefik v4 into all your hybrid branches.
 4. Users run `just tc <alias>` to scaffold projects.
+
+## Agent knowledge base
+
+Detailed context for AI agents lives in **`.agents/knowledge/`** — start at [INDEX.md](.agents/knowledge/INDEX.md).
+
+Cursor skill: `.agents/skills/cookiecutter-engine/SKILL.md`

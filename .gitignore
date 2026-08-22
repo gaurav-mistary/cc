@@ -1,3 +1,6 @@
+# Cascade merge reports (written to cwd by cc-cli cascade)
+cascade_log_*.json
+
 # Code
 .idea
 
