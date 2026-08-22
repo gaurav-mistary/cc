@@ -14,10 +14,54 @@ Instead of maintaining multiple folders of templates, we use **Git Branches** as
 
 ## The Architecture
 We have decoupled the engine from the templates:
-1. **`cc` (This Repo)**: Acts as the core engine. It contains the CLI python code, and the raw base building block branches (`py3.12`, `traefik`, `dockhand`).
-2. **`cc-templates` (Your Fork)**: A fork of `cc` where you create your hybrid templates (e.g. `traefik--secure--dockhand`). You use GitHub to sync updates from `cc` into your fork, and then use `cc cascade` to propagate those updates to your hybrids.
+1. **`cc` (This Repo)**: CLI engine (`cc-cli`), cascade merges, and the **Docker image** you pull on servers. Optional base branches (`py3.12`, `traefik`, `dockhand`) can sync into the templates repo.
+2. **`cc-templates` (Separate Repo)**: Cookiecutter templates for self-hosted services (dockhand, immich, audiobookshelf, vaultwarden, backups, …) plus hybrid branches (`traefik--secure--dockhand`). Hosts `registry.json` for friendly aliases.
+
+```
+cc (engine + image)  ──docker push──►  ghcr.io/gaurav-mistary/cc
+                                              │
+cc-templates (branches)  ◄──cookiecutter clone─┘  (at docker run)
+```
+
+Full change log and tree:
+- Human guide: [`docs/DOCKER.md`](docs/DOCKER.md)
+- Agent hub: [`.agents/knowledge/11-structure-and-changelog.md`](.agents/knowledge/11-structure-and-changelog.md)
 
 ## Usage
+
+### Docker (recommended on a server)
+
+Build and push (from this repo), or wait for CI on `main`:
+
+```bash
+just docker-build
+# Optional local push (after: echo $GITHUB_TOKEN | docker login ghcr.io -u USER --password-stdin)
+just docker-push
+```
+
+On any server — pull the image, then generate a project from a **cc-templates** branch:
+
+```bash
+docker pull ghcr.io/gaurav-mistary/cc:latest
+
+# Alias from registry.json → Cookiecutter clones that branch from cc-templates
+docker run --rm -it \
+  -v /opt/stacks:/output \
+  ghcr.io/gaurav-mistary/cc:latest \
+  template create secure-dockhand -o /output
+
+# Exact branch name
+docker run --rm -it \
+  -v /opt/stacks:/output \
+  ghcr.io/gaurav-mistary/cc:latest \
+  template create traefik--secure -o /output
+```
+
+Defaults baked into the image:
+- `TEMPLATES_REPO_URL=https://github.com/gaurav-mistary/cc-templates.git`
+- `CC_REGISTRY=…/cc-templates/main/registry.json`
+
+Override with `-e TEMPLATES_REPO_URL=…` if your catalog lives elsewhere.
 
 ### The `tc` Just Module
 The fastest way to use this system is via the `tc` (Template Create) module loaded in your `justfile`.

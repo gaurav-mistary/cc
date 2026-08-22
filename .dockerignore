@@ -1,0 +1,41 @@
+# Git / VCS
+.git
+.gitignore
+.gitattributes
+
+# Local env & secrets
+.env
+.env.*
+!.env.example
+
+# Python junk
+.venv
+__pycache__
+*.py[cod]
+*.egg-info
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+htmlcov
+
+# Dev / IDE
+.idea
+.vscode
+.agents
+*.md
+!README.md
+
+# Cascade logs & scratch
+cascade_log_*.json
+plane-docker-compose.yml
+rename_branches.sh
+GEMINI_INTEGRATION.md
+
+# CI (not needed in image)
+.github
+.pre-commit-config.yaml
+
+# Docker context itself
+Dockerfile
+.dockerignore
