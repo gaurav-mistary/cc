@@ -1,0 +1,23 @@
+---
+description: Never attribute git commits or GitHub contributions to Cursor Agent
+alwaysApply: true
+---
+
+# No Cursor Agent as Git contributor
+
+The user **never** wants Cursor Agent (or any Cursor identity) listed as a GitHub contributor on this project.
+
+## Hard rules
+
+1. **Do not** add `Co-authored-by: Cursor` / `cursoragent@cursor.com` (or any Cursor co-author trailer) to commits.
+2. **Do not** commit, amend, or push in a way that attributes work to `Cursor`, `cursoragent`, or `cursoragent@cursor.com`.
+3. After every `git commit` made in this environment, **immediately check** `git log -1 --format=%B`. If a Cursor `Co-authored-by` line was auto-injected, **strip it** with amend before push:
+   ```bash
+   git log -1 --format=%B | sed '/Co-authored-by:.*[Cc]ursor/d' | sed '/^Made-with: Cursor$/d' | git commit --amend -F -
+   ```
+4. Prefer the user's configured identity only (`Gaurav Mistary` / their git `user.email`). Never set author/committer to Cursor.
+5. If history already contains Cursor co-authors on commits this agent created, fix with rewrite + `git push --force-with-lease` **only when the user explicitly asks** to remove that attribution (as they have for this repo).
+
+## Reminder
+
+GitHub shows Cursor as a contributor from **commit message trailers**, not only from Author/Committer fields.
